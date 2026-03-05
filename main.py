@@ -1,12 +1,21 @@
+import os
+from dotenv import load_dotenv
+
 from langchain_ollama import ChatOllama
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.output_parsers import StrOutputParser
 
 
+load_dotenv()
+
+MODEL_NAME = os.getenv("MODEL_NAME", "qwen2.5-coder:3b")
+TEMPERATURE = float(os.getenv("TEMPERATURE", "0.7"))
+MAX_TURNS = int(os.getenv("MAX_TURNS", "5"))
+
 llm = ChatOllama(
-    model="qwen2.5-coder:3b",
-    temperature=0.7,
+    model=MODEL_NAME,
+    temperature=TEMPERATURE,
 )
 
 prompt = ChatPromptTemplate.from_messages([
@@ -18,8 +27,6 @@ prompt = ChatPromptTemplate.from_messages([
 chain = prompt | llm | StrOutputParser()
 
 chat_history = []
-
-MAX_TURNS = 5  # 10 exchanges = 20 messages (human + AI)
 
 
 def chat(question: str) -> str:
